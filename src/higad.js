@@ -3,22 +3,15 @@
 * A snake-like game inspired by Engineer-man's Python-based snake game
 * Author: Anthony Lim
 */
-
-const blessed = require('blessed')
 const cursor = require('ansi')(process.stdout)
 require('./Array.prototype.equals')
 const Debugger = require('./debugger')
 const constants = require('./constants')
 
-const program = blessed.program()
-const screen = blessed.screen({
-    useBCE: true,
-    smartCSR: true,
-    title: 'Higad Paxenxia'
-})
-
 class Higad {
-    constructor (debug) {
+    constructor (program, screen, debug) {
+        this.program = program
+        this.screen = screen
         this.debug = debug
         this.logger = new Debugger({
             yPosition: screen.height - 1,
@@ -27,8 +20,6 @@ class Higad {
             enable: debug,
             program,
         })
-        program.clear()
-        program.disableMouse()
         this.exitKeys = ['escape', 'q', 'C-c']
         this.state = {
             sh: null,
@@ -40,22 +31,18 @@ class Higad {
             interval: 100,
             timer: null,
         }
-        this.onInit()
         this.initEvents = this.initEvents.bind(this)
         this.startGame = this.startGame.bind(this)
         this.getState = this.getState.bind(this)
         this.setState = this.setState.bind(this)
         this.cleanUp = this.cleanUp.bind(this)
-        this.initEvents();
-        const {interval} = this.getState()
-        this.setState({
-            timer: setInterval(this.startGame, interval),
-        })
     }
 
     onInit () {
-        const sh = screen.height - (this.debug ? 2 : 1)
-        const sw = screen.width;
+        this.program.clear()
+        cursor.hide()
+        const sh = this.screen.height - (this.debug ? 2 : 1)
+        const sw = this.screen.width;
         const snk_x = parseInt(sw/4);
         const snk_y = parseInt(sh/2);
         const higad = [
@@ -68,11 +55,15 @@ class Higad {
             sw,
             higad,
         })
-        cursor.hide()
+        this.initEvents();
+        const {interval} = this.getState()
+        this.setState({
+            timer: setInterval(this.startGame, interval),
+        })
     }
 
     initEvents () {
-        screen.key([constants.DIRECTION_DOWN, 
+        this.screen.key([constants.DIRECTION_DOWN, 
                 constants.DIRECTION_LEFT, 
                 constants.DIRECTION_RIGHT, 
                 constants.DIRECTION_UP], (e, key) => {
@@ -81,9 +72,10 @@ class Higad {
                 this.setState({key: key.name})
             }
         })
-        screen.key(this.exitKeys, () => {
+        this.screen.key(this.exitKeys, () => {
             this.cleanUp()
             process.exit(0)
+            this.cleanUp()
         })
     }
 
@@ -158,15 +150,15 @@ class Higad {
         const {sh, timer} = this.getState()
         clearInterval(timer);
         this.logger.write(this.logger.normalize(`Game Over! Your Score: ${this.getState().score}. Press space for new game, Ctrl+C to quit.`), [0, sh]);
-        screen.onceKey(['space'], function(){
-            (new Higad())
+        this.screen.onceKey(['space'], function(){
+            (new Higad()).onInit()
         })
         this.cleanUp()
     }
 
     cleanUp () {
         cursor.show()
-        program.enableMouse();
+        this.program.enableMouse();
     }
 
     showScore () {
