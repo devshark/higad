@@ -75,7 +75,6 @@ class Higad {
         this.screen.key(this.exitKeys, () => {
             this.cleanUp()
             process.exit(0)
-            this.cleanUp()
         })
     }
 
@@ -150,8 +149,9 @@ class Higad {
         const {sh, timer} = this.getState()
         clearInterval(timer);
         this.logger.write(this.logger.normalize(`Game Over! Your Score: ${this.getState().score}. Press space for new game, Ctrl+C to quit.`), [0, sh]);
-        this.screen.onceKey(['space'], function(){
-            (new Higad()).onInit()
+        this.screen.onceKey(['space'], () => {
+            // const bago = (new Higad(this.program, this.screen, this.debug))
+            this.onInit()
         })
         this.cleanUp()
     }
