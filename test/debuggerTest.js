@@ -2,24 +2,7 @@ const chai = require('chai')
 const assert = chai.assert
 
 const Debugger = require('../src/debugger')
-const {ProgramMock, ScreenMock} = require('./utils/mocks')
-
-class Formulate {
-    constructor(padding, maxWidth){
-        this.padding = padding
-        this.maxWidth = maxWidth
-    }
-    normalize(obj) {
-        let stringText = null
-        if (obj instanceof Object) {
-            stringText = JSON.stringify(obj)
-        } else {
-            stringText = obj.toString()
-        }
-        const paddingSize = this.maxWidth - stringText.length
-        return `${stringText}${Array(paddingSize).fill(this.padding).join('')}`
-    }
-}
+const {ProgramMock, Formulate} = require('./utils/mocks')
 
 describe('Debugger', () => {
     it('must set the exact values', () => {
