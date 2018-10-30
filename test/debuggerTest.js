@@ -2,21 +2,7 @@ const chai = require('chai')
 const assert = chai.assert
 
 const Debugger = require('../src/debugger')
-
-class ProgramMock {
-    constructor () {
-        this.x = null
-        this.y = null
-        this.t = null
-    }
-    move (xAxis, yAxis) {
-        this.x = xAxis
-        this.y = yAxis
-    }
-    write (text) {
-        this.t = text
-    }
-}
+const {ProgramMock, ScreenMock} = require('./utils/mocks')
 
 class Formulate {
     constructor(padding, maxWidth){
