@@ -25,7 +25,7 @@ class Higad {
             sh: null,
             sw: null,
             score: 0,
-            snake: [],
+            higad: [],
             food: null,
             key: constants.DIRECTION_RIGHT,
             interval: 100,
@@ -157,6 +157,8 @@ class Higad {
     }
 
     cleanUp () {
+        let {timer} = this.getState()
+        clearInterval(timer);
         cursor.show()
         this.program.enableMouse();
     }
