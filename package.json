@@ -1,0 +1,14 @@
+{
+  "name": "higad",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "author": "devshark/anthony.lim",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "ansi": "^0.3.1",
+    "blessed": "^0.1.81"
+  }
+}
