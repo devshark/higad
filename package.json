@@ -5,10 +5,15 @@
   "license": "MIT",
   "author": "devshark/anthony.lim",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "mocha"
   },
   "dependencies": {
     "ansi": "^0.3.1",
     "blessed": "^0.1.81"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
   }
 }
