@@ -29,12 +29,6 @@ class Higad {
         })
         program.clear()
         program.disableMouse()
-        this.opposites = Object.freeze({
-            left: constants.DIRECTION_RIGHT,
-            right: constants.DIRECTION_LEFT,
-            up: constants.DIRECTION_DOWN,
-            down: constants.DIRECTION_UP,
-        })
         this.exitKeys = ['escape', 'q', 'C-c']
         this.state = {
             sh: null,
@@ -51,6 +45,7 @@ class Higad {
         this.startGame = this.startGame.bind(this)
         this.getState = this.getState.bind(this)
         this.setState = this.setState.bind(this)
+        this.cleanUp = this.cleanUp.bind(this)
         this.initEvents();
         const {interval} = this.getState()
         this.setState({
@@ -82,11 +77,12 @@ class Higad {
                 constants.DIRECTION_RIGHT, 
                 constants.DIRECTION_UP], (e, key) => {
             const currentKey = this.getState().key;
-            if (this.opposites[currentKey] != key.name) {
+            if (constants.OPPOSITES[currentKey] != key.name) {
                 this.setState({key: key.name})
             }
         })
         screen.key(this.exitKeys, () => {
+            this.cleanUp()
             process.exit(0)
         })
     }
@@ -165,7 +161,12 @@ class Higad {
         screen.onceKey(['space'], function(){
             (new Higad())
         })
+        this.cleanUp()
+    }
+
+    cleanUp () {
         cursor.show()
+        program.enableMouse();
     }
 
     showScore () {
