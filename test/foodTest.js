@@ -1,7 +1,7 @@
 const chai = require('chai')
 const expect = chai.expect
 
-const {FoodFactory} = require('./utils/factory')
+const {FoodFactory} = require('./utils/factories')
 
 describe('Food', () => {
     it('must create food', () => {

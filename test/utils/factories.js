@@ -3,6 +3,8 @@ const expect = chai.expect
 
 const Food = require('../../src/food')
 const Higad = require('../../src/higad')
+const Game = require('../../src/game')
+const {CursorMock, ProgramMock, ScreenMock} = require('./mocks')
 
 const screenSize = {
     height: 400,
@@ -30,7 +32,28 @@ const HigadFactory = () => {
     return higad
 }
 
+const GameFactory = (debug) => {
+    const game = new Game({
+        cursor: new CursorMock(),
+        program: new ProgramMock(),
+        screen: new ScreenMock(screenSize.height, screenSize.width),
+        debug,
+    })
+    const { score, higad, food, timer, maxHeight, maxWidth } = game.getState()
+    expect(game).to.have.own.property('debug', debug)
+    expect(game).to.have.own.property('logger')
+    expect(game).to.have.own.property('keys')
+    expect(game).to.have.own.property('state')
+    expect(score).to.be.equal(0)
+    expect(higad).to.be.null
+    expect(food).to.be.null
+    expect(timer).to.be.null
+    expect(maxHeight).to.be.equal(screenSize.height - (debug ? 2 : 1))
+    expect(maxWidth).to.be.equal(screenSize.width)
+}
+
 module.exports = {
+    GameFactory,
     FoodFactory,
     HigadFactory,
     screenSize,

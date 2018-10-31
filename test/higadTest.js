@@ -1,7 +1,7 @@
 const chai = require('chai')
 const expect = chai.expect
 
-const {HigadFactory, screenSize} = require('./utils/factory')
+const {HigadFactory, screenSize} = require('./utils/factories')
 const C = require('../src/constants')
 const Food = require('../src/food')
 
