@@ -30,7 +30,7 @@ class Higad {
     }
 
     didHitItself () {
-        return this.higad.slice(1).includes(this.getHead())
+        return this.higad.slice(1).find(a => this.getHead().equals(a)) !== undefined
     }
 
     didHitEdge (maxHeight, maxWidth) {

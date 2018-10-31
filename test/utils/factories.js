@@ -50,6 +50,7 @@ const GameFactory = (debug) => {
     expect(timer).to.be.null
     expect(maxHeight).to.be.equal(screenSize.height - (debug ? 2 : 1))
     expect(maxWidth).to.be.equal(screenSize.width)
+    return game
 }
 
 module.exports = {

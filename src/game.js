@@ -60,7 +60,7 @@ class Game {
         this.cursor.hide()
         const {maxHeight, maxWidth} = this.getState(),
         food = new Food(maxWidth, maxHeight),
-        higad = new Higad([parseInt(maxHeight/4), parseInt(maxWidth/2)]);
+        higad = new Higad(parseInt(maxHeight/4), parseInt(maxWidth/2));
         higad.setDirection(C.DIRECTION_RIGHT)
         this.setState({
             food, higad,
@@ -69,7 +69,7 @@ class Game {
 
     initEvents () {
         this.screen.key(this.keys.directions, (e, key) => {
-            const currentKey = this.higad.getDirection()
+            const currentKey = this.getState().higad.getDirection()
             if (C.OPPOSITES[currentKey] != key.name) {
                 this.getState().higad.setDirection(key.name)
             }
@@ -81,6 +81,7 @@ class Game {
     }
 
     start () {
+        this.initEvents()
         const {interval} = this.getState()
         this.setState({
             timer: setInterval(this.moveFrame, interval),
@@ -89,19 +90,20 @@ class Game {
 
     moveFrame () {
         const {higad, score, food, maxHeight, maxWidth} = this.getState();
-        if (food == null) {
-            while(food == null) {
-                const newFood = new Food()
-                food = newFood.isInside(higad) ? null : newFood
-            }
-            this.logger.write(C.CHAR_FOOD, food)
-            this.logger.log({food})
+
+        while(food == null) {
+            const newFood = new Food(maxWidth, maxHeight)
+            food = newFood.isInside(higad) ? null : newFood
         }
+        this.logger.write(C.CHAR_FOOD, food.getLocation())
+        // this.logger.log({food})
+
         if (higad.didHitItself() || higad.didHitEdge(maxHeight, maxWidth)) {
             return this.gameOver()
         }
         const tail = higad.moveDirection()
         const newHead = higad.getHead()
+        this.logger.log({tail, newHead})
         if (higad.feed(food)) {
             food = null
             score++
