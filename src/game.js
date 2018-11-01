@@ -3,7 +3,7 @@
 * A snake-like game inspired by Engineer-man's Python-based snake game
 * Author: Anthony Lim
 */
-const Debugger = require('./debugger')
+const ScreenWriter = require('./writer')
 const C = require('./constants')
 require('./Array.prototype.equals')
 
@@ -32,23 +32,18 @@ class Game {
             this[requiredKey] = options[requiredKey]
         })
         this.debug = options.debug || false
-        this.logger = new Debugger({
+        this.logger = new ScreenWriter({
             yPosition: this.screen.height - 1,
             maxWidth: this.screen.width,
             padding: C.CHAR_SPACE,
             enable: this.debug || false,
             program: this.program,
         })
-        this.keys = {
-            exit: C.KEYS.EXIT,
-            restart: C.KEYS.RESTART,
-            directions: C.KEYS.DIRECTIONS,
-        }
         this.state = {
             score: 0,
             higad: null,
             food: null,
-            interval: 500,
+            interval: 100,
             timer: null,
             maxHeight: this.screen.height - 2,
             maxWidth: this.screen.width,
@@ -60,7 +55,7 @@ class Game {
         this.cursor.hide()
         const {maxHeight, maxWidth} = this.getState(),
         food = new Food(maxWidth, maxHeight),
-        higad = new Higad(parseInt(maxHeight/4), parseInt(maxWidth/2));
+        higad = new Higad(parseInt(maxWidth/2), parseInt(maxHeight/4));
         higad.setDirection(C.DIRECTION_RIGHT)
         this.setState({
             food, higad,
@@ -68,13 +63,18 @@ class Game {
     }
 
     initEvents () {
-        this.screen.key(this.keys.directions, (e, key) => {
-            const currentKey = this.getState().higad.getDirection()
-            if (C.OPPOSITES[currentKey] != key.name) {
-                this.getState().higad.setDirection(key.name)
+        this.screen.key(C.KEYS.DIRECTIONS, (e, key) => {
+            const {higad} = this.getState()
+            if (higad instanceof Higad) {
+                const currentDirection = higad.getDirection()
+                this.logger.log({currentDirection, key: key.name})
+                if (C.OPPOSITES[currentDirection] != key.name) {
+                    this.logger.log({currentDirection, key: key.name, pressed: true})
+                    higad.setDirection(key.name)
+                }
             }
         })
-        this.screen.onceKey(this.keys.exit, () => {
+        this.screen.onceKey(C.KEYS.EXIT, () => {
             this.cleanUp()
             process.exit(0)
         })
@@ -94,6 +94,10 @@ class Game {
         this.start()
     }
 
+    stop () {
+        clearInterval(this.getState().timer)
+    }
+
     moveFrame () {
         const {higad, maxHeight, maxWidth} = this.getState();
         let {food, score} = this.getState()
@@ -105,12 +109,12 @@ class Game {
             return this.gameOver()
         }
         if (higad.feed(food)) {
+            this.logger.write(C.CHAR_SPACE, food.getLocation())
             food = null
             score++
         }
         const tail = higad.move()
         const newHead = higad.getHead()
-        this.logger.log({tail, newHead})
         if (tail !== false && (tail instanceof Array)) {
             this.logger.write(C.CHAR_SPACE, tail)
         }
@@ -118,6 +122,7 @@ class Game {
             const newFood = new Food(maxWidth, maxHeight)
             food = newFood.isInside(higad.higad) ? null : newFood
         }
+        // this.logger.log({tail, newHead, food: food.getLocation(), maxWidth, maxHeight})
         this.logger.write(C.CHAR_HIGAD, newHead)
         this.setState({higad, food, score})
         this.showScore()
@@ -125,11 +130,11 @@ class Game {
 
     gameOver () {
         const {maxHeight} = this.getState()
-        this.logger.write(this.logger.normalize(`Game Over! Your Score: ${this.getState().score}. Press space for new game, Ctrl+C to quit.`), [0, this.maxWidth]);
-        this.screen.onceKey(this.keys.restart, () => {
+        this.logger.write(this.logger.normalize(`Game Over! Your Score: ${this.getState().score}. Press space for new game, Ctrl+C to quit.`), [0, maxHeight]);
+        this.screen.onceKey(C.KEYS.RESTART, () => {
             this.restart()
         })
-        this.cleanUp()
+        this.stop()
     }
 
     showScore () {
@@ -138,7 +143,7 @@ class Game {
     }
 
     cleanUp () {
-        clearInterval(this.getState().timer)
+        this.stop()
         this.setState({
             score: 0,
             higad: null,

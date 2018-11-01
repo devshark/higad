@@ -43,7 +43,6 @@ const GameFactory = (debug) => {
     const { score, higad, food, timer, maxHeight, maxWidth } = game.getState()
     expect(game).to.have.own.property('debug', debug)
     expect(game).to.have.own.property('logger')
-    expect(game).to.have.own.property('keys')
     expect(game).to.have.own.property('state')
     expect(score).to.be.equal(0)
     expect(higad).to.be.null
@@ -61,6 +60,9 @@ const PlayGameFactory = (game, rounds) => {
         const {food} = game.getState()
         const foodLocation = food.getLocation()
         higad.move(foodLocation[0], foodLocation[1])
+        // because we are navigating blindly, 
+        // we need to adjust the character 
+        // in case it is off the grid when eating the food
         switch (foodLocation[0]) { // x-axis
             case 0: // food is beside the left edge
                 higad.moveRight()

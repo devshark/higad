@@ -128,7 +128,7 @@ describe('Game', () => {
             expect(midScore).to.be.equal(rounds)
             expect(higad.higad).to.have.lengthOf(rounds + initialSize)
     
-            game.start = () => { /* override this method to do nothing */ console.log('Started') }
+            game.start = () => { /* override this method to do nothing; console.log('Started') */ }
 
             higad.move(game.screen.width, game.screen.height)
             game.moveFrame()
