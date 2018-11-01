@@ -5,7 +5,7 @@ const Game = require('../src/game')
 const Food = require('../src/food')
 const Higad = require('../src/higad')
 const C = require('../src/constants')
-const {GameFactory} = require('./utils/factories')
+const {GameFactory, FoodFactory} = require('./utils/factories')
 
 describe('Game', () => {
     it('must complain when options are missing', () => {
@@ -67,5 +67,22 @@ describe('Game', () => {
         higad.move(higad.higad[1][0], higad.higad[1][1])
         game.moveFrame()
         expect(game.program.t.trim().toLowerCase()).to.have.string('game over')
+    })
+
+    it('must increase size when it has eaten food', () => {
+        const game = GameFactory(false)
+        game.initialize()
+        const {higad, food, score} = game.getState()
+        const foodLocation = food.getLocation()
+        expect(higad.higad).to.have.lengthOf(3)
+        expect(score).to.be.equal(0)
+        higad.move(foodLocation[0], foodLocation[1]) // move higad onto the food
+        higad.setDirection(C.DIRECTION_RIGHT)
+        game.moveFrame()
+        const newScore = game.getState().score
+        expect(food.isInside(higad.higad)).to.be.true
+        expect(newScore).to.be.equal(1)
+        // console.dir({food: foodLocation, body: higad.higad, in: food.isInside(higad.higad)})
+        expect(higad.higad).to.have.lengthOf(4)
     })
 })

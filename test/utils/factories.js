@@ -48,7 +48,7 @@ const GameFactory = (debug) => {
     expect(higad).to.be.null
     expect(food).to.be.null
     expect(timer).to.be.null
-    expect(maxHeight).to.be.equal(screenSize.height - (debug ? 2 : 1))
+    expect(maxHeight).to.be.equal(screenSize.height - 2)
     expect(maxWidth).to.be.equal(screenSize.width)
     return game
 }
