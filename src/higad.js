@@ -31,12 +31,14 @@ class Higad {
     }
 
     didHitItself () {
-        return this.higad.slice(1).find(a => this.getHead().equals(a)) !== undefined
+        return isInside(this.higad, this.getHead(), 1)
+        // return this.higad.slice(1).find(a => this.getHead().equals(a)) !== undefined
     }
 
     didHitEdge (maxHeight, maxWidth) {
         const head = this.getHead()
-        return [0, maxHeight].includes(head[1]) || [0, maxWidth].includes(head[0])
+        return isInside([0, maxWidth], head[0]) || isInside([0, maxHeight], head[1])
+        // return [0, maxHeight].includes(head[1]) || [0, maxWidth].includes(head[0])
     }
 
     getDirection () {

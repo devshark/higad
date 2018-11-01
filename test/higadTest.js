@@ -13,7 +13,6 @@ describe('Higad', () => {
     
     it('must not hit the edge initially', () => {
         const higad = HigadFactory()
-        const head = higad.getHead()
         expect(higad.didHitEdge(screenSize.height, screenSize.width)).to.be.false
     })
 
