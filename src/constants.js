@@ -17,5 +17,9 @@ module.exports = Object.freeze({
         DIRECTION_LEFT: DIRECTION_RIGHT,
         DIRECTION_RIGHT: DIRECTION_LEFT,
     },
-    DIRECTIONS: [DIRECTION_UP, DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT],
+    KEYS: {
+        EXIT: ['escape', 'q', 'C-c'],
+        RESTART: ['space'],
+        DIRECTIONS: [DIRECTION_UP, DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT],
+    }
 })

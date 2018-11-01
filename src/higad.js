@@ -44,7 +44,7 @@ class Higad {
     }
 
     setDirection (direction) {
-        if (C.DIRECTIONS.includes(direction)) this.direction = direction
+        if (C.KEYS.DIRECTIONS.includes(direction)) this.direction = direction
     }
 
     isInside (location) {

@@ -40,9 +40,9 @@ class Game {
             program: this.program,
         })
         this.keys = {
-            exit: ['escape', 'q', 'C-c'],
-            restart: ['space'],
-            directions: C.DIRECTIONS,
+            exit: C.KEYS.EXIT,
+            restart: C.KEYS.RESTART,
+            directions: C.KEYS.DIRECTIONS,
         }
         this.state = {
             score: 0,
@@ -98,10 +98,6 @@ class Game {
         const {higad, maxHeight, maxWidth} = this.getState();
         let {food, score} = this.getState()
 
-        while(food == null) {
-            const newFood = new Food(maxWidth, maxHeight)
-            food = newFood.isInside(higad) ? null : newFood
-        }
         this.logger.write(C.CHAR_FOOD, food.getLocation())
         // this.logger.log({food})
 
@@ -117,6 +113,10 @@ class Game {
         this.logger.log({tail, newHead})
         if (tail !== false && (tail instanceof Array)) {
             this.logger.write(C.CHAR_SPACE, tail)
+        }
+        while(food === null) {
+            const newFood = new Food(maxWidth, maxHeight)
+            food = newFood.isInside(higad.higad) ? null : newFood
         }
         this.logger.write(C.CHAR_HIGAD, newHead)
         this.setState({higad, food, score})
@@ -139,6 +139,13 @@ class Game {
 
     cleanUp () {
         clearInterval(this.getState().timer)
+        this.setState({
+            score: 0,
+            higad: null,
+            food: null,
+            interval: 500,
+            timer: null,
+        })
         this.program.clear()
         this.cursor.show()
     }
