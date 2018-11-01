@@ -12,10 +12,10 @@ module.exports = Object.freeze({
     CHAR_FOOD: "\u2764",
     CHAR_SPACE: ' ',
     OPPOSITES: {
-        DIRECTION_UP: DIRECTION_DOWN,
-        DIRECTION_DOWN: DIRECTION_UP,
-        DIRECTION_LEFT: DIRECTION_RIGHT,
-        DIRECTION_RIGHT: DIRECTION_LEFT,
+        [DIRECTION_UP]: DIRECTION_DOWN,
+        [DIRECTION_DOWN]: DIRECTION_UP,
+        [DIRECTION_LEFT]: DIRECTION_RIGHT,
+        [DIRECTION_RIGHT]: DIRECTION_LEFT,
     },
     KEYS: {
         EXIT: ['escape', 'q', 'C-c'],
