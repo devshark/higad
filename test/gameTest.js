@@ -5,7 +5,7 @@ const Game = require('../src/game')
 const Food = require('../src/food')
 const Higad = require('../src/higad')
 const C = require('../src/constants')
-const {GameFactory, FoodFactory} = require('./utils/factories')
+const {GameFactory, PlayGameFactory} = require('./utils/factories')
 
 describe('Game', () => {
     it('must complain when options are missing', () => {
@@ -85,4 +85,51 @@ describe('Game', () => {
         // console.dir({food: foodLocation, body: higad.higad, in: food.isInside(higad.higad)})
         expect(higad.higad).to.have.lengthOf(4)
     })
+
+    it('must survive 10 rounds', () => {
+        const game = GameFactory(false)
+        game.initialize()
+        const {score, higad} = game.getState(),
+        initialSize = higad.higad.length;
+        higad.setDirection(C.DIRECTION_RIGHT)
+        expect(score).to.be.equal(0)
+        const rounds = 10
+        PlayGameFactory(game, rounds)
+        const lastScore = game.getState().score
+        expect(lastScore).to.be.equal(rounds)
+        expect(higad.higad).to.have.lengthOf(rounds + initialSize)
+    })
+/*
+    it('must be able to end game after 10 rounds, restart game with initial state, and win 20 rounds', () => {
+        const game = GameFactory(false)
+        game.initialize()
+        const {score, higad} = game.getState(),
+        initialSize = higad.higad.length;
+        higad.setDirection(C.DIRECTION_RIGHT)
+
+        expect(score).to.be.equal(0)
+
+        let rounds = 10
+        PlayGameFactory(game, rounds)
+        const midScore = game.getState().score
+        expect(midScore).to.be.equal(rounds)
+        expect(higad.higad).to.have.lengthOf(rounds + initialSize)
+
+        higad.move(game.screen.width, game.screen.height)
+        game.moveFrame()
+        expect(game.program.t.trim().toLowerCase()).to.have.string('game over')
+
+        game.screen.triggerKey(C.KEYS.RESTART)
+        expect(score).to.be.equal(0)
+        expect(higad).to.be.null
+        expect(food).to.be.null
+        expect(timer).to.be.null
+
+        rounds = 20
+        PlayGameFactory(game, rounds)
+        const lastScore = game.getState().score
+        expect(lastScore).to.be.equal(rounds)
+        expect(origHigad.higad).to.have.lengthOf(rounds + initialSize)
+    })
+    */
 })
