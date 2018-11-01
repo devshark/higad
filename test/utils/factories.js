@@ -4,6 +4,7 @@ const expect = chai.expect
 const Food = require('../../src/food')
 const Higad = require('../../src/higad')
 const Game = require('../../src/game')
+const C = require('../../src/constants')
 const {CursorMock, ProgramMock, ScreenMock} = require('./mocks')
 
 const screenSize = {
@@ -53,9 +54,40 @@ const GameFactory = (debug) => {
     return game
 }
 
+const PlayGameFactory = (game, rounds) => {
+    const {higad} = game.getState()
+    const initialSize = higad.higad.length
+    for(let round = 1; round <= rounds; round++) {
+        const {food} = game.getState()
+        const foodLocation = food.getLocation()
+        higad.move(foodLocation[0], foodLocation[1])
+        switch (foodLocation[0]) {
+            case 0: // food is beside the left edge
+                higad.setDirection(C.DIRECTION_RIGHT);
+                break;
+            case food.maxX: // food is beside the right edge
+                higad.setDirection(C.DIRECTION_LEFT);
+                break;
+        }
+        switch (foodLocation[1]) {
+            case 0: // food is below the roof
+                higad.setDirection(C.DIRECTION_DOWN);
+                break;
+            case food.maxY: // food is on the floor
+                higad.setDirection(C.DIRECTION_UP);
+                break;
+        }
+        game.moveFrame()
+        const newScore = game.getState().score
+        expect(newScore).to.be.equal(round)
+        expect(higad.higad).to.have.lengthOf(round + initialSize)
+    }
+}
+
 module.exports = {
     GameFactory,
     FoodFactory,
     HigadFactory,
     screenSize,
+    PlayGameFactory,
 }
