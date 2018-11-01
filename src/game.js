@@ -50,7 +50,7 @@ class Game {
             food: null,
             interval: 500,
             timer: null,
-            maxHeight: this.screen.height - (this.debug ? 2 : 1),
+            maxHeight: this.screen.height - 2,
             maxWidth: this.screen.width,
         }
     }
@@ -74,7 +74,7 @@ class Game {
                 this.getState().higad.setDirection(key.name)
             }
         })
-        this.screen.key(this.keys.exit, () => {
+        this.screen.onceKey(this.keys.exit, () => {
             this.cleanUp()
             process.exit(0)
         })
@@ -88,8 +88,15 @@ class Game {
         })
     }
 
+    restart () {
+        this.cleanUp()
+        this.initialize()
+        this.start()
+    }
+
     moveFrame () {
-        const {higad, score, food, maxHeight, maxWidth} = this.getState();
+        const {higad, maxHeight, maxWidth} = this.getState();
+        let {food, score} = this.getState()
 
         while(food == null) {
             const newFood = new Food(maxWidth, maxHeight)
@@ -101,13 +108,14 @@ class Game {
         if (higad.didHitItself() || higad.didHitEdge(maxHeight, maxWidth)) {
             return this.gameOver()
         }
-        const tail = higad.moveDirection()
-        const newHead = higad.getHead()
-        this.logger.log({tail, newHead})
         if (higad.feed(food)) {
             food = null
             score++
-        } else {
+        }
+        const tail = higad.move()
+        const newHead = higad.getHead()
+        this.logger.log({tail, newHead})
+        if (tail !== false && (tail instanceof Array)) {
             this.logger.write(C.CHAR_SPACE, tail)
         }
         this.logger.write(C.CHAR_HIGAD, newHead)
@@ -119,9 +127,7 @@ class Game {
         const {maxHeight} = this.getState()
         this.logger.write(this.logger.normalize(`Game Over! Your Score: ${this.getState().score}. Press space for new game, Ctrl+C to quit.`), [0, this.maxWidth]);
         this.screen.onceKey(this.keys.restart, () => {
-            // const bago = (new Higad(this.program, this.screen, this.debug))
-            this.initialize()
-            this.start()
+            this.restart()
         })
         this.cleanUp()
     }
