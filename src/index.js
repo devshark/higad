@@ -28,7 +28,7 @@ const screen = blessed.screen({
 })
 
 const Game = require('./game')
-const debug = false
+const debug = true
 
 const game = new Game({
     blessed, program, screen, cursor, debug,

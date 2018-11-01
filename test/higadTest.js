@@ -53,7 +53,7 @@ describe('Higad', () => {
         const foodLocation = food.getLocation()
         higad.move(foodLocation[0]-1, foodLocation[1]) // in front of higad
         higad.setDirection(C.DIRECTION_RIGHT) // higad direction is to the right
-        higad.moveDirection() // higad will take a step forward
+        higad.move() // higad will take a step forward
         expect(higad.feed(food)).to.be.true
     })
 
@@ -66,7 +66,7 @@ describe('Higad', () => {
         expect(head1).to.have.members([initHead[0], initHead[1]+1])
         
         higad.setDirection(C.DIRECTION_DOWN)
-        higad.moveDirection()
+        higad.move()
         const head10 = higad.getHead().slice()
         expect(head10).to.have.members([head1[0], head1[1]+1])
 
@@ -75,7 +75,7 @@ describe('Higad', () => {
         expect(head2).to.have.members([head10[0], head10[1]-1])
 
         higad.setDirection(C.DIRECTION_UP)
-        higad.moveDirection()
+        higad.move()
         const head20 = higad.getHead().slice()
         expect(head20).to.have.members([head2[0], head2[1]-1])
 
@@ -84,7 +84,7 @@ describe('Higad', () => {
         expect(head3).to.have.members([head20[0]-1, head20[1]])
 
         higad.setDirection(C.DIRECTION_LEFT)
-        higad.moveDirection()
+        higad.move()
         const head30 = higad.getHead().slice()
         expect(head30).to.have.members([head3[0]-1, head3[1]])
 
@@ -93,7 +93,7 @@ describe('Higad', () => {
         expect(head4).to.have.members([head30[0]+1, head30[1]])
 
         higad.setDirection(C.DIRECTION_RIGHT)
-        higad.moveDirection()
+        higad.move()
         const head40 = higad.getHead().slice()
         expect(head40).to.have.members([head4[0]+1, head4[1]])
 

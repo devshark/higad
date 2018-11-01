@@ -5,6 +5,7 @@
 */
 const C = require('./constants')
 const Food = require('./food')
+const {isInside} = require('./utils')
 require('./Array.prototype.equals')
 
 class Higad {
@@ -26,11 +27,11 @@ class Higad {
     }
 
     getHead () {
-        return this.higad[0]
+        return this.higad[0].slice()
     }
 
     didHitItself () {
-        return this.higad.slice(1).includes(this.getHead())
+        return this.higad.slice(1).find(a => this.getHead().equals(a)) !== undefined
     }
 
     didHitEdge (maxHeight, maxWidth) {
@@ -47,7 +48,7 @@ class Higad {
     }
 
     isInside (location) {
-        return this.higad.find(a=>location.equals(a)) !== undefined
+        return isInside(this.higad, location)
     }
 
     feed (food) {
@@ -59,12 +60,12 @@ class Higad {
 
     moveLeft () {
         const head = this.getHead()
-        return this.move(head[0]-1, head[1])
+        return this.move(head[0]-1)
     }
 
     moveRight () {
         const head = this.getHead()
-        return this.move(head[0]+1, head[1])
+        return this.move(head[0]+1)
     }
 
     moveUp () {
@@ -77,29 +78,38 @@ class Higad {
         return this.move(head[0], head[1]+1)
     }
     
-    moveDirection () {
-        const direction = this.getDirection()
-        switch (direction) {
-            case C.DIRECTION_UP:
-                return this.moveUp()
-                break;
-            case C.DIRECTION_DOWN:
-                return this.moveDown()
-                break;
-            case C.DIRECTION_LEFT:
-                return this.moveLeft()
-                break;
-            case C.DIRECTION_RIGHT:
-                return this.moveRight()
-                break;
-        }
-    }
-
     move (x, y) {
-        this.higad.unshift([x, y]) // move the head to the new location
+        if (x === undefined && y === undefined) {
+            // if there's no specific location to move, just move normally
+            const direction = this.getDirection()
+            switch (direction) {
+                case C.DIRECTION_UP:
+                    return this.moveUp()
+                    break;
+                case C.DIRECTION_DOWN:
+                    return this.moveDown()
+                    break;
+                case C.DIRECTION_LEFT:
+                    return this.moveLeft()
+                    break;
+                case C.DIRECTION_RIGHT:
+                    return this.moveRight()
+                    break;
+            }
+        } else {
+            // move to the new location as specified
+            const origHead = this.getHead()
+            x = x || origHead[0]
+            y = y || origHead[1]
+            const newHead = [x, y]
+            this.higad.unshift(newHead)
+        }
         if (!this.hasEaten) {
+            // if it hasn't eaten yet, move the tail forward then end the function
             return this.higad.pop()
         }
+        // it will only reach this if he has eaten
+        // so unset the meal and return
         return this.hasEaten = false
     }
 }
