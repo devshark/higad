@@ -61,24 +61,28 @@ const PlayGameFactory = (game, rounds) => {
         const {food} = game.getState()
         const foodLocation = food.getLocation()
         higad.move(foodLocation[0], foodLocation[1])
-        switch (foodLocation[0]) {
+        switch (foodLocation[0]) { // x-axis
             case 0: // food is beside the left edge
-                higad.setDirection(C.DIRECTION_RIGHT);
-                break;
-            case food.maxX: // food is beside the right edge
+                higad.moveRight()
                 higad.setDirection(C.DIRECTION_LEFT);
                 break;
+            case food.maxX: // food is beside the right edge
+                higad.moveLeft()
+                higad.setDirection(C.DIRECTION_RIGHT);
+                break;
         }
-        switch (foodLocation[1]) {
+        switch (foodLocation[1]) { // y-axis
             case 0: // food is below the roof
-                higad.setDirection(C.DIRECTION_DOWN);
+                higad.moveDown()
+                higad.setDirection(C.DIRECTION_UP);
                 break;
             case food.maxY: // food is on the floor
-                higad.setDirection(C.DIRECTION_UP);
+                higad.moveUp()
+                higad.setDirection(C.DIRECTION_DOWN);
                 break;
         }
         game.moveFrame()
-        const newScore = game.getState().score
+        const {score: newScore} = game.getState()
         expect(newScore).to.be.equal(round)
         expect(higad.higad).to.have.lengthOf(round + initialSize)
     }
