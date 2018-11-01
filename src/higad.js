@@ -99,8 +99,8 @@ class Higad {
         } else {
             // move to the new location as specified
             const origHead = this.getHead()
-            x = x || origHead[0]
-            y = y || origHead[1]
+            x = x === undefined ? origHead[0] : x
+            y = y === undefined ? origHead[1] : y
             const newHead = [x, y]
             this.higad.unshift(newHead)
         }
