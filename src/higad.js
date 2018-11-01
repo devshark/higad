@@ -27,7 +27,7 @@ class Higad {
     }
 
     getHead () {
-        return this.higad[0]
+        return this.higad[0].slice()
     }
 
     didHitItself () {
@@ -60,12 +60,12 @@ class Higad {
 
     moveLeft () {
         const head = this.getHead()
-        return this.move(head[0]-1, head[1])
+        return this.move(head[0]-1)
     }
 
     moveRight () {
         const head = this.getHead()
-        return this.move(head[0]+1, head[1])
+        return this.move(head[0]+1)
     }
 
     moveUp () {
@@ -78,26 +78,32 @@ class Higad {
         return this.move(head[0], head[1]+1)
     }
     
-    moveDirection () {
-        const direction = this.getDirection()
-        switch (direction) {
-            case C.DIRECTION_UP:
-                return this.moveUp()
-                break;
-            case C.DIRECTION_DOWN:
-                return this.moveDown()
-                break;
-            case C.DIRECTION_LEFT:
-                return this.moveLeft()
-                break;
-            case C.DIRECTION_RIGHT:
-                return this.moveRight()
-                break;
-        }
-    }
-
     move (x, y) {
-        this.higad.unshift([x, y]) // move the head to the new location
+        if (x === undefined && y === undefined) {
+            // if there's no specific location to move, just move normally
+            const direction = this.getDirection()
+            switch (direction) {
+                case C.DIRECTION_UP:
+                    return this.moveUp()
+                    break;
+                case C.DIRECTION_DOWN:
+                    return this.moveDown()
+                    break;
+                case C.DIRECTION_LEFT:
+                    return this.moveLeft()
+                    break;
+                case C.DIRECTION_RIGHT:
+                    return this.moveRight()
+                    break;
+            }
+        } else {
+            // move to the new location as specified
+            const origHead = this.getHead()
+            x = x || origHead[0]
+            y = y || origHead[1]
+            const newHead = [x, y]
+            this.higad.unshift(newHead)
+        }
         if (!this.hasEaten) {
             return this.higad.pop()
         }
