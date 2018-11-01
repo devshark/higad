@@ -105,8 +105,11 @@ class Higad {
             this.higad.unshift(newHead)
         }
         if (!this.hasEaten) {
+            // if it hasn't eaten yet, move the tail forward then end the function
             return this.higad.pop()
         }
+        // it will only reach this if he has eaten
+        // so unset the meal and return
         return this.hasEaten = false
     }
 }
