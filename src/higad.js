@@ -5,6 +5,7 @@
 */
 const C = require('./constants')
 const Food = require('./food')
+const {isInside} = require('./utils')
 require('./Array.prototype.equals')
 
 class Higad {
@@ -47,7 +48,7 @@ class Higad {
     }
 
     isInside (location) {
-        return this.higad.find(a=>location.equals(a)) !== undefined
+        return isInside(this.higad, location)
     }
 
     feed (food) {

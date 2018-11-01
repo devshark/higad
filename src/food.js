@@ -3,6 +3,8 @@
 * A snake-like game inspired by Engineer-man's Python-based snake game
 * Author: Anthony Lim
 */
+const {isInside} = require('./utils')
+require('./Array.prototype.equals')
 class Food {
     constructor (maxX, maxY) {
         this.maxX = maxX
@@ -11,7 +13,7 @@ class Food {
         this.getLocation = () => food
     }
     isInside (locationList) {
-        return locationList.find(a => this.getLocation().equals(a)) !== undefined
+        return isInside(locationList, this.getLocation())
     }
     getFood () {
         return [
