@@ -148,7 +148,7 @@ class Game {
             score: 0,
             higad: null,
             food: null,
-            interval: 500,
+            interval: 100,
             timer: null,
         })
         this.program.clear()

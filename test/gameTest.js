@@ -54,7 +54,7 @@ describe('Game', () => {
         game.initialize()
         const {higad} = game.getState()
         higad.setDirection(C.DIRECTION_RIGHT)
-        higad.move(game.screen.width, game.screen.height)
+        higad.move(-1, -1)
         game.moveFrame()
         expect(game.program.t.trim().toLowerCase()).to.have.string('game over')
     })
@@ -130,7 +130,7 @@ describe('Game', () => {
     
             game.start = () => { /* override this method to do nothing; console.log('Started') */ }
 
-            higad.move(game.screen.width, game.screen.height)
+            higad.move(-1, -1)
             game.moveFrame()
             expect(game.program.t.trim().toLowerCase()).to.have.string('game over')
     

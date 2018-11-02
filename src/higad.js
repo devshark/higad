@@ -37,7 +37,7 @@ class Higad {
 
     didHitEdge (maxHeight, maxWidth) {
         const head = this.getHead()
-        return isInside([0, maxWidth], head[0]) || isInside([0, maxHeight], head[1])
+        return isInside([-1, maxWidth+1], head[0]) || isInside([0-1, maxHeight+1], head[1])
         // return [0, maxHeight].includes(head[1]) || [0, maxWidth].includes(head[0])
     }
 
