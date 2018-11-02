@@ -52,18 +52,23 @@ class ScreenMock {
             // console.log(this.mapOfKeyEvents.keys[k])
             if (this.mapOfKeyEvents.keys.hasOwnProperty(k)) {
                 this.mapOfKeyEvents.keys[k].forEach(fn => {
-                    fn(null, k)
+                    fn(null, { name: k })
                 })
             }
             // console.log(this.mapOfKeyEvents.onceKey[k])
             if (this.mapOfKeyEvents.onceKey.hasOwnProperty(k)) {
                 this.mapOfKeyEvents.onceKey[k].forEach(fn => {
-                    fn(null, k)
+                    fn(null, { name: k })
                 })
                 this.mapOfKeyEvents.onceKey[k].length = 0
             }
         })
     }
+}
+
+class CursorMock {
+    hide () { }
+    show () { }
 }
 
 class Formulate {
@@ -87,4 +92,5 @@ module.exports = {
     ProgramMock,
     ScreenMock,
     Formulate,
+    CursorMock,
 }

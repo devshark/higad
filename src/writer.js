@@ -1,4 +1,4 @@
-class Debugger {
+class ScreenWriter {
     constructor (options) {
         this.options = Object.assign({
             yPosition: 0, 
@@ -7,6 +7,7 @@ class Debugger {
             enable: true,
             program: null,
         }, options)
+        // console.log({yPosition: this.options.yPosition, maxWidth: this.options.maxWidth})
     }
     log (obj) {
         if (!this.options.enable) return;
@@ -32,9 +33,10 @@ class Debugger {
         if (!this.options.program) {
             return console.log(char)
         }
+        // console.log({loc, char: char.trim()})
         this.options.program.move(loc[0], loc[1])
         this.options.program.write(char)
     }
 }
 
-module.exports = Debugger
+module.exports = ScreenWriter

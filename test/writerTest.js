@@ -1,16 +1,16 @@
 const chai = require('chai')
 const assert = chai.assert
 
-const Debugger = require('../src/debugger')
+const ScreenWriter = require('../src/writer')
 const {ProgramMock, Formulate} = require('./utils/mocks')
 
-describe('Debugger', () => {
+describe('ScreenWriter', () => {
     it('must set the exact values', () => {
         const program = new ProgramMock()
         const xAxis = 30
         const yAxis = 40;
         const text = Buffer.from('randomstring').toString('base64')
-        const d = new Debugger({
+        const d = new ScreenWriter({
             yPosition: 150,
             maxWidth: 200,
             padding: '@',
@@ -28,7 +28,7 @@ describe('Debugger', () => {
         const maxWidth = 200
         const padding = '@'
         const form = new Formulate(padding, maxWidth)
-        const d = new Debugger({
+        const d = new ScreenWriter({
             yPosition: 150,
             maxWidth,
             padding,
@@ -47,7 +47,7 @@ describe('Debugger', () => {
         const maxWidth = 200
         const padding = '@'
         const form = new Formulate(padding, maxWidth)
-        const d = new Debugger({
+        const d = new ScreenWriter({
             yPosition: 150,
             maxWidth,
             padding,
@@ -64,7 +64,7 @@ describe('Debugger', () => {
     it('must not write if debug is disabled', () => {
         const program = new ProgramMock()
         const text = Buffer.from('randomstring').toString('base64')
-        const d = new Debugger({
+        const d = new ScreenWriter({
             yPosition: 150,
             maxWidth: 200,
             padding: '@',
@@ -84,7 +84,7 @@ describe('Debugger', () => {
         const yPosition = 150
         const form = new Formulate(padding, maxWidth)
         const text = Buffer.from('randomstring').toString('base64')
-        const d = new Debugger({
+        const d = new ScreenWriter({
             yPosition,
             maxWidth,
             padding,

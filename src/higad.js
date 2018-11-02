@@ -3,176 +3,116 @@
 * A snake-like game inspired by Engineer-man's Python-based snake game
 * Author: Anthony Lim
 */
-const cursor = require('ansi')(process.stdout)
+const C = require('./constants')
+const Food = require('./food')
+const {isInside} = require('./utils')
 require('./Array.prototype.equals')
-const Debugger = require('./debugger')
-const constants = require('./constants')
 
 class Higad {
-    constructor (program, screen, debug) {
-        this.program = program
-        this.screen = screen
-        this.debug = debug
-        this.logger = new Debugger({
-            yPosition: screen.height - 1,
-            maxWidth: screen.width,
-            padding: constants.CHAR_SPACE,
-            enable: debug,
-            program,
-        })
-        this.exitKeys = ['escape', 'q', 'C-c']
-        this.state = {
-            sh: null,
-            sw: null,
-            score: 0,
-            higad: [],
-            food: null,
-            key: constants.DIRECTION_RIGHT,
-            interval: 100,
-            timer: null,
-        }
-        this.initEvents = this.initEvents.bind(this)
-        this.startGame = this.startGame.bind(this)
-        this.getState = this.getState.bind(this)
-        this.setState = this.setState.bind(this)
-        this.cleanUp = this.cleanUp.bind(this)
+    constructor (x, y) {
+        this.onInit([x, y])
     }
 
-    onInit () {
-        this.program.clear()
-        cursor.hide()
-        const sh = this.screen.height - (this.debug ? 2 : 1)
-        const sw = this.screen.width;
-        const snk_x = parseInt(sw/4);
-        const snk_y = parseInt(sh/2);
-        const higad = [
-            [snk_x, snk_y],
-            [snk_x-1, snk_y],
-            [snk_x-2, snk_y],
+    onInit (headPosition) {
+        if (!headPosition instanceof Array || headPosition.length !== 2) {
+            throw new Error('Argument headPosition must be an array with exactly two elements!')
+        }
+        this.higad = [
+            headPosition,
+            [headPosition[0]-1, headPosition[1]],
+            [headPosition[0]-2, headPosition[1]],
         ]
-        this.setState({
-            sh,
-            sw,
-            higad,
-        })
-        this.initEvents();
-        const {interval} = this.getState()
-        this.setState({
-            timer: setInterval(this.startGame, interval),
-        })
+        this.direction = null
+        this.hasEaten = false
     }
 
-    initEvents () {
-        this.screen.key([constants.DIRECTION_DOWN, 
-                constants.DIRECTION_LEFT, 
-                constants.DIRECTION_RIGHT, 
-                constants.DIRECTION_UP], (e, key) => {
-            const currentKey = this.getState().key;
-            if (constants.OPPOSITES[currentKey] != key.name) {
-                this.setState({key: key.name})
-            }
-        })
-        this.screen.key(this.exitKeys, () => {
-            this.cleanUp()
-            process.exit(0)
-        })
+    getHead () {
+        return this.higad[0].slice()
     }
 
-    getFood () {
-        const {sh, sw} = this.getState()
-        const { random } = Math
-        return [
-            (parseInt(random() * sw)),
-            (parseInt(random() * sh)),
-        ]
+    didHitItself () {
+        return isInside(this.higad, this.getHead(), 1)
+        // return this.higad.slice(1).find(a => this.getHead().equals(a)) !== undefined
     }
 
-    startGame () {
-        let {higad, sh, sw, food, key, score} = this.getState()
-        if (food == null) {
-            while (food == null) {
-                const newFood = this.getFood()
-                food = higad.includes(newFood) ? null : newFood
-            }
-            this.logger.write(constants.CHAR_FOOD, food)
-            this.logger.log({food})
+    didHitEdge (maxHeight, maxWidth) {
+        const head = this.getHead()
+        return isInside([-1, maxWidth+1], head[0]) || isInside([0-1, maxHeight+1], head[1])
+        // return [0, maxHeight].includes(head[1]) || [0, maxWidth].includes(head[0])
+    }
+
+    getDirection () {
+        return this.direction
+    }
+
+    setDirection (direction) {
+        if (C.KEYS.DIRECTIONS.includes(direction)) this.direction = direction
+    }
+
+    isInside (location) {
+        return isInside(this.higad, location)
+    }
+
+    feed (food) {
+        if (!(food instanceof Food)) {
+            throw new Error('I can only eat Food!')
         }
-        this.logger.log({higad: higad[0], body: higad.slice(1), includes: higad.slice(1).includes(higad[0])})
-        this.showScore()
-        if ([0, sw].includes(higad[0][0]) || // it hit the sides
-            [0, sh].includes(higad[0][1]) || // it hit the floor/ceiling
-            higad.slice(1).find(s=>s.equals(higad[0])) // it hit itself
-        ) {
-            return this.gameOver();
-        }
-        const newHead = higad[0].slice()
-        switch (key) {
-            case constants.DIRECTION_UP:
-                newHead[1] -= 1;
-                break;
-            case constants.DIRECTION_DOWN:
-                newHead[1] += 1;
-                break;
-            case constants.DIRECTION_LEFT:
-                newHead[0] -= 1;
-                break;
-            case constants.DIRECTION_RIGHT:
-                newHead[0] += 1;
-                break; 
-        }
-        higad.unshift(newHead)
-        if (food.equals(newHead)) {
-            food = null
-            score++;
-            if (score % 10 == 0) {
-                this.speedUp()
+        return this.hasEaten = food.isInside(this.higad)
+    }
+
+    moveLeft () {
+        const head = this.getHead()
+        return this.move(head[0]-1)
+    }
+
+    moveRight () {
+        const head = this.getHead()
+        return this.move(head[0]+1)
+    }
+
+    moveUp () {
+        const head = this.getHead()
+        return this.move(head[0], head[1]-1)
+    }
+
+    moveDown () {
+        const head = this.getHead()
+        return this.move(head[0], head[1]+1)
+    }
+    
+    move (x, y) {
+        if (x === undefined && y === undefined) {
+            // if there's no specific location to move, just move normally
+            const direction = this.getDirection()
+            switch (direction) {
+                case C.DIRECTION_UP:
+                    return this.moveUp()
+                    break;
+                case C.DIRECTION_DOWN:
+                    return this.moveDown()
+                    break;
+                case C.DIRECTION_LEFT:
+                    return this.moveLeft()
+                    break;
+                case C.DIRECTION_RIGHT:
+                    return this.moveRight()
+                    break;
             }
         } else {
-            const tail = higad.pop()
-            this.logger.write(constants.CHAR_SPACE, tail)
+            // move to the new location as specified
+            const origHead = this.getHead()
+            x = x === undefined ? origHead[0] : x
+            y = y === undefined ? origHead[1] : y
+            const newHead = [x, y]
+            this.higad.unshift(newHead)
         }
-        this.logger.write(constants.CHAR_HIGAD, newHead)
-        this.setState({higad, food, score})
-    }
-
-    speedUp () {
-        let {timer, interval} = this.getState()
-        interval -= 10
-        clearInterval(timer);
-        this.setState({
-            interval,
-            timer: setInterval(this.startGame, interval)
-        })
-    }
-
-    gameOver () {
-        const {sh, timer} = this.getState()
-        clearInterval(timer);
-        this.logger.write(this.logger.normalize(`Game Over! Your Score: ${this.getState().score}. Press space for new game, Ctrl+C to quit.`), [0, sh]);
-        this.screen.onceKey(['space'], () => {
-            // const bago = (new Higad(this.program, this.screen, this.debug))
-            this.onInit()
-        })
-        this.cleanUp()
-    }
-
-    cleanUp () {
-        let {timer} = this.getState()
-        clearInterval(timer);
-        cursor.show()
-        this.program.enableMouse();
-    }
-
-    showScore () {
-        const { sh } = this.getState()
-        this.logger.write(this.logger.normalize(`Score: ${this.getState().score}. Press Ctrl+C to quit.`), [0, sh])
-    }
-
-    setState (newState) {
-        this.state = Object.assign({}, this.state, newState);
-    }
-    getState () {
-        return this.state;
+        if (!this.hasEaten) {
+            // if it hasn't eaten yet, move the tail forward then end the function
+            return this.higad.pop()
+        }
+        // it will only reach this if he has eaten
+        // so unset the meal and return
+        return this.hasEaten = false
     }
 }
 
