@@ -3,6 +3,8 @@ A snake-like game crawling against the terminal, written in Node.
 
 [![Build Status](https://travis-ci.com/devshark/higad.svg?branch=master)](https://travis-ci.com/devshark/higad)
 
+[![codecov](https://codecov.io/gh/devshark/higad/branch/master/graph/badge.svg)](https://codecov.io/gh/devshark/higad)
+
 ## Installation
 You need npm or yarn or other Node package managers before you can install.
 ```sh
