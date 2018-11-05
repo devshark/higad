@@ -109,7 +109,10 @@ class Game {
             return this.gameOver()
         }
         if (higad.feed(food)) {
-            this.logger.write(C.CHAR_SPACE, food.getLocation())
+            // this means the food has been eaten,
+            // and the higad grew a character long.
+            // Food must be changed to the higad character
+            this.logger.write(C.CHAR_HIGAD, food.getLocation())
             food = null
             score++
         }
